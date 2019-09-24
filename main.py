@@ -90,41 +90,31 @@ def test(model, test_loader):
 
 
 if __name__ == '__main__':
+    if MULTI_GPU:
+        num_gpu = 2
+    else:
+        num_gpu = 1
+    verbose = True
+    os.system('nvidia-smi -q -d Memory | grep -A4 GPU | grep Free > tmp')
+    gpu_memory = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
+    gpu_ids = np.argsort(-1*np.array(gpu_memory))
+    os.system('rm tmp')
+    assert(num_gpu <= len(gpu_ids))
+    os.environ['CUDA_VISIBLE_DEVICES']=','.join(map(str, gpu_ids[:num_gpu]))
+    if verbose:
+        print('Current GPU [%s], free memory: [%s] MB'%(os.environ['CUDA_VISIBLE_DEVICES'], ','.join(map(str, np.array(gpu_memory)[gpu_ids[:num_gpu]]))))
+
     frame = inspect.currentframe() # define a frame to track
     gpu_tracker = MemTracker(frame) # define a GPU tracker
     gpu_tracker.track() # run function between the code line where uses GPU
 
     if MULTI_GPU:
-        # Initialize the model and the optimizer
-        # set_gpu(num_gpu=2, verbose=True)
-        num_gpu = 2
-        verbose = True
-        os.system('nvidia-smi -q -d Memory | grep -A4 GPU | grep Free > tmp')
-        gpu_memory = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
-        gpu_ids = np.argsort(-1*np.array(gpu_memory))
-        os.system('rm tmp')
-        assert(num_gpu <= len(gpu_ids))
-        os.environ['CUDA_VISIBLE_DEVICES']=','.join(map(str, gpu_ids[:num_gpu]))
-        if verbose:
-            print('Current GPU [%s], free memory: [%s] MB'%(os.environ['CUDA_VISIBLE_DEVICES'], ','.join(map(str, np.array(gpu_memory)[gpu_ids[:num_gpu]]))))
-        
+        # Initialize the model and the optimizer        
         model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES)
         model = nn.DataParallel(model).cuda()
         optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     else:
         # Initialize the model and the optimizer
-        # set_gpu(num_gpu=1, verbose=True)
-        num_gpu = 1
-        verbose = True
-        os.system('nvidia-smi -q -d Memory | grep -A4 GPU | grep Free > tmp')
-        gpu_memory = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
-        gpu_ids = np.argsort(-1*np.array(gpu_memory))
-        os.system('rm tmp')
-        assert(num_gpu <= len(gpu_ids))
-        os.environ['CUDA_VISIBLE_DEVICES']=','.join(map(str, gpu_ids[:num_gpu]))
-        if verbose:
-            print('Current GPU [%s], free memory: [%s] MB'%(os.environ['CUDA_VISIBLE_DEVICES'], ','.join(map(str, np.array(gpu_memory)[gpu_ids[:num_gpu]]))))
-
         model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES).cuda()
         optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     summary(model, (INPUT_CHANNELS, 5000))

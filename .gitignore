@@ -1,5 +1,6 @@
 data/train/raw_data/
 data/test/raw_data/
+*gpu_mem_track.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
