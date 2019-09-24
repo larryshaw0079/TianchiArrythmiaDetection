@@ -54,7 +54,7 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None):
 
             loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
 
-            if val_loader is not None and (i+1) % 200 == 0:
+            if val_loader is not None and (i+1) % 100 == 0:
                 with torch.no_grad():
                     for x, y in val_loader:
                         x, y = x.cuda(), y.cuda()
@@ -78,7 +78,7 @@ def test(model, test_loader):
         test_contents = f.readlines()
 
     with open('testA.txt', 'w', encoding='utf8') as f:
-        for i, line in enumerate(test_contents):
+        for i, line in tqdm(enumerate(test_contents)):
             line = line[:-1]
             for j in range(result.shape[1]):
                 if result[i,j] == 1:
@@ -91,7 +91,7 @@ def test(model, test_loader):
 
 if __name__ == '__main__':
     if MULTI_GPU:
-        num_gpu = 2
+        num_gpu = 3
     else:
         num_gpu = 1
     verbose = True
@@ -126,8 +126,8 @@ if __name__ == '__main__':
     train_size = int(len(dataset)*TRAIN_SPLIT)
     val_size = len(dataset) - train_size
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=14)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=14)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
     # Training
     criterion = WeightedCrossEntropy(weights)

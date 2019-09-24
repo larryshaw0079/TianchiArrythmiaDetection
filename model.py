@@ -48,6 +48,13 @@ class ECGData(Dataset):
         else:
             # In the test phase, return the features (1, num_channels, time_length) only
             x = np.loadtxt('data/test/raw_data/%s'%(self.dirs[idx]), delimiter=' ', skiprows=1)
+            if self.extend:
+                extended_channels = np.zeros((x.shape[0], 4))
+                extended_channels[:, 0] = x[:, 1] - x[:, 0]
+                extended_channels[:, 1] = -(x[:, 1] + x[:, 0])/2
+                extended_channels[:, 2] = x[:, 0] - x[:, 1]/2
+                extended_channels[:, 3] = x[:, 1] - x[:, 0]/2
+                x = np.concatenate([x, extended_channels], axis=1)
             x = torch.from_numpy(np.transpose(x.astype(np.float32)))
             return x
 
