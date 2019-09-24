@@ -14,17 +14,7 @@ def set_gpu(num_gpu=1, verbose=True):
     assert(num_gpu <= len(gpu_ids))
     os.environ['VISIBLE_DEVICES']=','.join(map(str, gpu_ids[:num_gpu]))
     if verbose:
-        print('Current GPU [%s], free memory: [%s] MB'%(os.environ['VISIBLE_DEVICES'], ','.join(map(str, np.sort(gpu_memory[::-1])[:num_gpu]))))
-
-
-def get_gpu(num_gpu=1):
-    os.system('nvidia-smi -q -d Memory | grep -A4 GPU | grep Free > tmp')
-    gpu_memory = [int(x.split()[2]) for x in open('tmp', 'r').readlines()]
-    gpu_ids = np.argsort(gpu_memory[::-1])
-    os.system('rm tmp')
-    assert(num_gpu <= len(gpu_ids))
-
-    return gpu_ids[:num_gpu]
+        print('Current GPU [%s], free memory: [%s] MB'%(os.environ['VISIBLE_DEVICES'], ','.join(map(str, np.flip(np.sort(gpu_memory))[:num_gpu]))))
 
 
 class WeightedCrossEntropy(nn.Module):

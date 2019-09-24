@@ -43,7 +43,7 @@ class ECGData(Dataset):
                 extended_channels[:, 3] = x[:, 1] - x[:, 0]/2
                 x = np.concatenate([x, extended_channels], axis=1)
             x = torch.from_numpy(np.transpose(x).astype(np.float32)).cuda()
-            y = torch.from_numpy(self.target.iloc[idx, 3:].values.astype(np.int)).cuda()
+            y = torch.from_numpy(self.target.iloc[idx, 3:].values.astype(np.float32)).cuda()
             return x, y
         else:
             # In the test phase, return the features (1, num_channels, time_length) only
@@ -73,6 +73,9 @@ class ResidualBlock(nn.Module):
     """
     def __init__(self, input_channels, output_channels, stride=1):
         super(ResidualBlock, self).__init__()
+        self.input_channels = input_channels
+        self.output_channels = output_channels
+        self.stride = stride
 
         self.conv1 = nn.Sequential(
             nn.Conv1d(input_channels, output_channels, kernel_size=3, stride=1, padding=1, bias=False),
@@ -110,8 +113,8 @@ class ResidualBlock(nn.Module):
         residual = x
 
         out = self.conv1(x)
-        out = self.conv2(x)
-        out = self.conv3(x)
+        out = self.conv2(out)
+        out = self.conv3(out)
 
         residual = self.downsample(x) # Downsampe is an empty list if the size of inputs and outputs are same
         out += residual
@@ -160,8 +163,7 @@ class ResNet(nn.Module):
         layers = []
         layers.append(block(input_channels, output_channels, stride=stride))
         for i in range(1, num_blocks):
-            layers.append(block(output_channels, output_channels, stride=1))
-        
+            layers.append(block(output_channels, output_channels, stride=1))        
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -169,13 +171,13 @@ class ResNet(nn.Module):
         L_out = floor[(L_in + 2*padding - kernel) / stride + 1]
         @param x: (batch_size: 200, num_channels: 12, time_length: 5000)
         """
-        out = self.conv1(x)           # (batch_size: 200, num_channels: 64, time_length: 2500)
-        out = self.layer1(out)        # (batch_size: 200, num_channels: 64, time_length: 2500)
-        out = self.layer2(out)        # (batch_size: 200, num_channels: 128, time_length: 1250)
-        out = self.layer3(out)        # (batch_size: 200, num_channels: 256, time_length: 625)
-        out = self.layer4(out)        # (batch_size: 200, num_channels: 512, time_length: 313)
-        out = self.avg_pool(out)      # (batch_size: 200, num_channels: 512, time_length: 1)
-        out = out.view(x.size(0), -1) # (batch_size: 200, num_channels: 512)
-        out = self.fc(out)            # (batch_size: 200, num_channels: 55)
+        out = self.conv1(x)           # (batch_size, num_channels: 64, time_length: 2500)
+        out = self.layer1(out)        # (batch_size, num_channels: 64, time_length: 2500)
+        out = self.layer2(out)        # (batch_size, num_channels: 128, time_length: 1250)
+        out = self.layer3(out)        # (batch_size, num_channels: 256, time_length: 625)
+        out = self.layer4(out)        # (batch_size, num_channels: 512, time_length: 313)
+        out = self.avg_pool(out)      # (batch_size, num_channels: 512, time_length: 1)
+        out = out.view(x.size(0), -1) # (batch_size, num_channels: 512)
+        out = self.fc(out)            # (batch_size, num_channels: 55)
 
         return out

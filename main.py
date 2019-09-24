@@ -13,6 +13,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader, random_split
 
+from modelsummary import summary
+
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from model import ECGData, ResNet
@@ -34,14 +36,14 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None):
             loss.backward()
             optimizer.step()
 
-            loader.set_postfix({'train_loss': np.mean(total_train_loss), 'val_loss': np.mean(total_val_loss)})
+            loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
 
-            if val_loader is not None and i % 10 == 0:
+            if val_loader is not None and (i+1) % 200 == 0:
                 for x, y in val_loader:
                     out = model(x)
                     loss = criterion(out, y)
-                    totoal_val_loss.append(loss.item())
-                    loader.set_postfix({'train_loss': np.mean(total_train_loss), 'val_loss': np.mean(total_val_loss)})
+                    total_val_loss.append(loss.item())
+                    loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
 
 
 def test(model, test_loader):
@@ -70,12 +72,18 @@ def test(model, test_loader):
 
 
 if __name__ == '__main__':
-    set_gpu(num_gpu=2, verbose=True)
-
-    # Initialize the model and the optimizer
-    model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES).cuda()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-    print(model)
+    if MULTI_GPU:
+        # Initialize the model and the optimizer
+        set_gpu(num_gpu=4, verbose=True)
+        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES)
+        model = nn.DataParallel(model).cuda()
+        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    else:
+        set_gpu(num_gpu=1, verbose=True)
+        # Initialize the model and the optimizer
+        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES).cuda()
+        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    summary(model, torch.zeros(1, INPUT_CHANNELS, 5000).cuda(), show_input=False)
 
     # Dataset
     dataset = ECGData(phase='train')
@@ -84,7 +92,7 @@ if __name__ == '__main__':
     val_size = len(dataset) - train_size
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=False)
-    val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # Training
     criterion = WeightedCrossEntropy(weights)
