@@ -70,7 +70,7 @@ def test(model, test_loader):
 
 
 if __name__ == '__main__':
-    set_gpu(verbose=True)
+    set_gpu(num_gpu=2, verbose=True)
 
     # Initialize the model and the optimizer
     model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES).cuda()
