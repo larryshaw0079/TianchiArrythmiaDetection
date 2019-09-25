@@ -78,27 +78,28 @@ class ResidualBlock(nn.Module):
     @param output_channels: The number of channels of the output
     @param stride: The stride
     """
-    def __init__(self, input_channels, output_channels, stride=1):
+    def __init__(self, input_channels, output_channels, stride=1, dropout=0.2):
         super(ResidualBlock, self).__init__()
         self.input_channels = input_channels
         self.output_channels = output_channels
         self.stride = stride
 
         self.conv1 = nn.Sequential(
-            nn.Conv1d(input_channels, output_channels, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv1d(input_channels, output_channels, kernel_size=7, stride=1, padding=3, bias=False),
             nn.BatchNorm1d(output_channels),
             nn.ReLU(inplace=True)
         )
 
         # Only conv2 degrades the scale
         self.conv2 = nn.Sequential(
-            nn.Conv1d(output_channels, output_channels, kernel_size=3, stride=stride, padding=1, bias=False),
+            nn.Conv1d(output_channels, output_channels, kernel_size=11, stride=stride, padding=5, bias=False),
             nn.BatchNorm1d(output_channels),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
         )
 
         self.conv3 = nn.Sequential(
-            nn.Conv1d(output_channels, output_channels, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv1d(output_channels, output_channels, kernel_size=7, stride=1, padding=3, bias=False),
             nn.BatchNorm1d(output_channels),
         )
 
@@ -112,7 +113,7 @@ class ResidualBlock(nn.Module):
         self.downsample = nn.Sequential()
         if stride != 1 or input_channels != output_channels:
             self.downsample = nn.Sequential(
-                nn.Conv1d(input_channels, output_channels, kernel_size=3, stride=stride, padding=1, bias=False),
+                nn.Conv1d(input_channels, output_channels, kernel_size=1, stride=stride, padding=0, bias=False),
                 nn.BatchNorm1d(output_channels)
             )
 
@@ -142,7 +143,7 @@ class ResNet(nn.Module):
 
         # The first convolution layer
         self.conv1 = nn.Sequential(
-            nn.Conv1d(input_channels, hidden_channels, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.Conv1d(input_channels, hidden_channels, kernel_size=15, stride=2, padding=7, bias=False),
             nn.BatchNorm1d(hidden_channels),
             nn.ReLU(inplace=True)
         )
