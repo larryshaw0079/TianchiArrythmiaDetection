@@ -131,6 +131,66 @@ class ResidualBlock(nn.Module):
         return out
 
 
+class ResidualBlockDilated(nn.Module):
+    """
+    The residual block
+    @param input_channels: The number of channels of the input data
+    @param output_channels: The number of channels of the output
+    @param stride: The stride
+    """
+    def __init__(self, input_channels, output_channels, stride=1, dropout=0.2):
+        super(ResidualBlockDilated, self).__init__()
+        self.input_channels = input_channels
+        self.output_channels = output_channels
+        self.stride = stride
+
+        self.conv1 = nn.Sequential(
+            nn.Conv1d(input_channels, output_channels, kernel_size=3, dilation=1, stride=1, padding=1, bias=False),
+            nn.BatchNorm1d(output_channels),
+            nn.ReLU(inplace=True)
+        )
+
+        # Only conv2 degrades the scale
+        self.conv2 = nn.Sequential(
+            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=2, stride=stride, padding=2, bias=False),
+            nn.BatchNorm1d(output_channels),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
+        )
+
+        self.conv3 = nn.Sequential(
+            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=4, stride=1, padding=4, bias=False),
+            nn.BatchNorm1d(output_channels),
+        )
+
+        self.relu = nn.ReLU(inplace=True)
+
+
+        # If stride == 1, the length of the time dimension will not be changed
+        # If input_channels == output_channels, the number of channels will not be changed
+        # If the channels are mismatch, the conv1d is used to upgrade the channel
+        # If the time dimensions are mismatch, the conv1d is used to downsample the scale
+        self.downsample = nn.Sequential()
+        if stride != 1 or input_channels != output_channels:
+            self.downsample = nn.Sequential(
+                nn.Conv1d(input_channels, output_channels, kernel_size=1, stride=stride, padding=0, bias=False),
+                nn.BatchNorm1d(output_channels)
+            )
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.conv2(out)
+        out = self.conv3(out)
+
+        residual = self.downsample(x) # Downsampe is an empty list if the size of inputs and outputs are same
+        out += residual
+        out = self.relu(out)
+        
+        return out
+
+
 class ResNet(nn.Module):
     """
     The ResNet model
@@ -138,7 +198,7 @@ class ResNet(nn.Module):
     @param hidden_channels: The channels of the output of the first conv1d layer
     @param num_classes: The number of classes of the target
     """
-    def __init__(self, input_channels, hidden_channels, num_classes):
+    def __init__(self, input_channels, hidden_channels, num_classes, dilated=False):
         super(ResNet, self).__init__()
 
         # The first convolution layer
@@ -149,10 +209,17 @@ class ResNet(nn.Module):
         )
 
         # Residual layers
-        self.layer1 = self.__make_layer(ResidualBlock, hidden_channels, hidden_channels, 2, stride=1)
-        self.layer2 = self.__make_layer(ResidualBlock, hidden_channels, hidden_channels*2, 2, stride=2)
-        self.layer3 = self.__make_layer(ResidualBlock, hidden_channels*2, hidden_channels*4, 2, stride=2)
-        self.layer4 = self.__make_layer(ResidualBlock, hidden_channels*4, hidden_channels*8, 2, stride=2)
+        if dilated:
+            self.layer1 = self.__make_layer(ResidualBlock, hidden_channels, hidden_channels, 2, stride=1)
+            self.layer2 = self.__make_layer(ResidualBlock, hidden_channels, hidden_channels*2, 2, stride=2)
+            self.layer3 = self.__make_layer(ResidualBlock, hidden_channels*2, hidden_channels*4, 2, stride=2)
+            self.layer4 = self.__make_layer(ResidualBlock, hidden_channels*4, hidden_channels*8, 2, stride=2)
+        else:
+            self.layer1 = self.__make_layer(ResidualBlockDilated, hidden_channels, hidden_channels, 2, stride=1)
+            self.layer2 = self.__make_layer(ResidualBlockDilated, hidden_channels, hidden_channels*2, 2, stride=2)
+            self.layer3 = self.__make_layer(ResidualBlockDilated, hidden_channels*2, hidden_channels*4, 2, stride=2)
+            self.layer4 = self.__make_layer(ResidualBlockDilated, hidden_channels*4, hidden_channels*8, 2, stride=2)
+
         self.avg_pool = nn.AdaptiveAvgPool1d(1) # Pooling operation computes the average of the last dimension (time dimension)
 
         # A dense layer for output

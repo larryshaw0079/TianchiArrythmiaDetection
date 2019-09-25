@@ -177,12 +177,12 @@ if __name__ == '__main__':
 
     if MULTI_GPU:
         # Initialize the model and the optimizer        
-        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES)
+        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
         model = nn.DataParallel(model).cuda()
         optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     else:
         # Initialize the model and the optimizer
-        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES).cuda()
+        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED).cuda()
         optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     summary(model, (INPUT_CHANNELS, 5000))
     gpu_tracker.track() # run function between the code line where uses GPU
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     gpu_tracker.track() # run function between the code line where uses GPU
 
     if SAVE_MODEL:
-        save_model(model, path='output/resnet_kernelbig_epoch30_%s.pkl'%(str(datetime.now())))
+        save_model(model, path='output/%s_epoch%d_%s.pkl'%(SAVE_NAME, EPOCHS, str(datetime.now())))
 
     # Evaluating
     print('==================================================')
