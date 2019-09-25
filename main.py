@@ -72,7 +72,7 @@ def evaluate(model, data_loader):
     with torch.no_grad():
         for x, y in tqdm(data_loader):
             x = x.cuda()
-            output = model(x).detach().cpu().numpy()
+            output = F.sigmoid(model(x)).detach().cpu().numpy()
             results.append(output)
             target.append(y.numpy())
     result_expect_last = np.array(results[:-1]).reshape(-1, NUM_CLASSES)
@@ -107,7 +107,7 @@ def test(model, test_loader):
     Output results. Executing model.eval() before invoking this function is recommended.
     """
     with torch.no_grad():
-        output = [model(x.cuda()).detach().cpu().numpy() for x in tqdm(test_loader)]
+        output = [F.sigmoid(model(x.cuda())).detach().cpu().numpy() for x in tqdm(test_loader)]
         output_expect_last = np.array(output[:-1]).reshape(-1, NUM_CLASSES)
         output_last = np.array(output[-1]).reshape(-1, NUM_CLASSES)
         output = np.concatenate((output_expect_last, output_last), axis=0)

@@ -3946,3 +3946,1347 @@ At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
 
 At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
++ | 1 * Size:(11, 55)             | Memory: 0.0024 M | <class 'torch.Tensor'>
++ | 1 * Size:(20, 55)             | Memory: 0.0044 M | <class 'torch.Tensor'>
+- | 2 * Size:(20, 55)             | Memory: 0.0088 M | <class 'torch.Tensor'> 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
++ | 2 * Size:(20, 55)             | Memory: 0.0088 M | <class 'torch.Tensor'>
+- | 1 * Size:(11, 55)             | Memory: 0.0024 M | <class 'torch.Tensor'> 
+- | 1 * Size:(20, 55)             | Memory: 0.0044 M | <class 'torch.Tensor'> 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
++ | 1 * Size:(15, 55)             | Memory: 0.0033 M | <class 'torch.Tensor'>
++ | 1 * Size:(20, 55)             | Memory: 0.0044 M | <class 'torch.Tensor'>
++ | 1 * Size:(15, 12, 5000)       | Memory: 3.6 M | <class 'torch.Tensor'>
+- | 1 * Size:(20, 12, 5000)       | Memory: 4.8 M | <class 'torch.Tensor'> 
+- | 2 * Size:(20, 55)             | Memory: 0.0088 M | <class 'torch.Tensor'> 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
++ | 2 * Size:(15, 55)             | Memory: 0.0066 M | <class 'torch.Tensor'>
+- | 1 * Size:(15, 55)             | Memory: 0.0033 M | <class 'torch.Tensor'> 
+- | 1 * Size:(20, 55)             | Memory: 0.0044 M | <class 'torch.Tensor'> 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
++ | 1 * Size:(20, 55)             | Memory: 0.0044 M | <class 'torch.Tensor'>
++ | 1 * Size:(20, 12, 5000)       | Memory: 4.8 M | <class 'torch.Tensor'>
++ | 28 * Size:()                   | Memory: 0.0001 M | <class 'torch.Tensor'>
+- | 29 * Size:()                   | Memory: 0.0001 M | <class 'torch.Tensor'> 
+- | 1 * Size:(15, 12, 5000)       | Memory: 3.6 M | <class 'torch.Tensor'> 
+- | 2 * Size:(15, 55)             | Memory: 0.0066 M | <class 'torch.Tensor'> 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
++ | 29 * Size:()                   | Memory: 0.0001 M | <class 'torch.Tensor'>
++ | 2 * Size:(20, 55)             | Memory: 0.0088 M | <class 'torch.Tensor'>
+- | 1 * Size:(20, 55)             | Memory: 0.0044 M | <class 'torch.Tensor'> 
+- | 28 * Size:()                   | Memory: 0.0001 M | <class 'torch.Tensor'> 
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
+
+At __main__ <module>: line 136                       Total Used Memory:12316.8Mb
+
