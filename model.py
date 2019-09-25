@@ -205,7 +205,8 @@ class ResNet(nn.Module):
         self.conv1 = nn.Sequential(
             nn.Conv1d(input_channels, hidden_channels, kernel_size=15, stride=2, padding=7, bias=False),
             nn.BatchNorm1d(hidden_channels),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.MaxPool1d(kernel_size=3, stride=2, padding=1)
         )
 
         # Residual layers
@@ -224,6 +225,15 @@ class ResNet(nn.Module):
 
         # A dense layer for output
         self.fc = nn.Linear(hidden_channels*8, num_classes)
+
+        # Initialize weights
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                n = m.kernel_size[0] * m.kernel_size[0] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+            elif isinstance(m, nn.BatchNorm1d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
 
     def __make_layer(self, block, input_channels, output_channels, num_blocks, stride):
         """
