@@ -185,7 +185,8 @@ if __name__ == '__main__':
 
     # Dataset
     dataset = ECGData(phase='train')
-    weights = F.softmin(torch.tensor(dataset.get_class_distribution().astype(np.float32), requires_grad=False).cuda())
+    # weights = F.softmin(torch.tensor(dataset.get_class_distribution().astype(np.float32), requires_grad=False).cuda())
+    weights = torch.tensor(1/np.log(dataset.get_class_distribution().astype(np.float32)), requires_grad=False).cuda()
     train_size = int(len(dataset)*TRAIN_SPLIT)
     val_size = len(dataset) - train_size
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
