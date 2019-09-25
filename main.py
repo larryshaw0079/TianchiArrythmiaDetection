@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 from torch.autograd import Variable
+from tensorboardX import SummaryWriter
 from torch.utils.data import Dataset, DataLoader, random_split
 
 import inspect
@@ -24,7 +26,7 @@ from util import WeightedCrossEntropy, FocalLossMultiClass
 from config import *
 
 
-def train(epoch, model, optimizer, criterion, train_loader, val_loader=None):
+def train(epoch, model, optimizer, criterion, train_loader, val_loader=None, writer=None):
     """
     Train the network for an epoch. Executing model.train() before invoking this function is recommended.
     @param epoch: The current epoch
@@ -33,23 +35,21 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None):
     @param criterion: The loss function
     @param train_loader: Training dataset loader
     @param val_loader: Validation dataset loader
+    @param writer: The tensorboard writer
     """
     total_train_loss = []
     total_val_loss = []
     with tqdm(train_loader, desc='Epoch: [%d/%d]'%(epoch+1, EPOCHS)) as loader:
         for i, (x, y) in enumerate(loader):
             x, y = x.cuda(), y.cuda()
-            gpu_tracker.track() # run function between the code line where uses GPU
             optimizer.zero_grad()
 
             out = model(x)
             loss = criterion(out, y)
             total_train_loss.append(loss.item())
-            gpu_tracker.track() # run function between the code line where uses GPU
 
             loss.backward()
             optimizer.step()
-            gpu_tracker.track() # run function between the code line where uses GPU
 
             loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
 
@@ -61,6 +61,10 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None):
                         loss = criterion(out, y)
                         total_val_loss.append(loss.item())
                         loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
+    
+    if writer is not None:
+        writer.add_scalar('Loss/train', np.mean(total_train_loss), epoch)
+        writer.add_scalar('Loss/val', np.mean(total_val_loss), epoch)
 
 
 def evaluate(model, data_loader):
@@ -93,7 +97,7 @@ def evaluate(model, data_loader):
     f1_micro = f1_score(result, target, average='micro')
     f1_macro = f1_score(result, target, average='macro')
 
-    with open('output/result.txt', 'w', encoding='utf8') as f:
+    with open('output/result-%s.txt'%(str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
         f.write('Presion Micro: %f\n'%precision_micro)
         f.write('Presion Macro: %f\n'%precision_macro)
         f.write('Recall Micro: %f\n'%recall_micro)
@@ -120,7 +124,7 @@ def test(model, test_loader):
     with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
         test_contents = f.readlines()
 
-    with open('output/testA.txt', 'w', encoding='utf8') as f:
+    with open('output/testA-%s.txt'%(str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
         for i, line in tqdm(enumerate(test_contents)):
             line = line[:-1]
             for j in range(result.shape[1]):
@@ -168,7 +172,7 @@ if __name__ == '__main__':
         print('Current GPU [%s], free memory: [%s] MB'%(os.environ['CUDA_VISIBLE_DEVICES'], ','.join(map(str, np.array(gpu_memory)[gpu_ids[:num_gpu]]))))
 
     frame = inspect.currentframe() # define a frame to track
-    gpu_tracker = MemTracker(frame, path='output/') # define a GPU tracker
+    gpu_tracker = MemTracker(frame, path='log/') # define a GPU tracker
     gpu_tracker.track() # run function between the code line where uses GPU
 
     if MULTI_GPU:
@@ -183,6 +187,14 @@ if __name__ == '__main__':
     summary(model, (INPUT_CHANNELS, 5000))
     gpu_tracker.track() # run function between the code line where uses GPU
 
+    writer = None
+    if ENABLE_TENSORBOARD:
+        writer = SummaryWriter(logdir='log/')
+        # add_graph on multi-gpu is not support
+        if not MULTI_GPU:
+            dummy_input = torch.rand(2, INPUT_CHANNELS, 5000, requires_grad=False).cuda()
+            writer.add_graph(model, (dummy_input, ))
+
     # Dataset
     dataset = ECGData(phase='train')
     # weights = F.softmin(torch.tensor(dataset.get_class_distribution().astype(np.float32), requires_grad=False).cuda())
@@ -194,22 +206,32 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
     # Training
+    print('==================================================')
+    print('| Trainging stage started.')
+    print('==================================================')
     criterion = WeightedCrossEntropy(weights)
     model.train()
     for epoch in range(EPOCHS):
-        train(epoch, model, optimizer, criterion, train_loader, val_loader)
+        train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
     gpu_tracker.track() # run function between the code line where uses GPU
 
     if SAVE_MODEL:
-        save_model(model, path='output/resnet_kernel3_epoch20.pkl')
+        save_model(model, path='output/resnet_kernelbig_epoch30_%s.pkl'%(str(datetime.now())))
 
     # Evaluating
+    print('==================================================')
+    print('| Evaluating stage started.')
+    print('==================================================')
     model.eval()
     evaluate(model, val_loader)
 
     # Testing
+    print('==================================================')
+    print('| Testing stage started.')
+    print('==================================================')
     test_dataset = ECGData(phase='test')
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, drop_last=False)
     model.eval()
     result = test(model, test_loader)
 
+    writer.close()
