@@ -1,4 +1,5 @@
 import os
+import pdb
 from datetime import datetime
 
 import numpy as np
@@ -20,9 +21,17 @@ from gpu_mem_track import MemTracker
 from torchsummary import summary
 
 from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import multilabel_confusion_matrix
 
-from model import ECGData, ResNet
-from util import WeightedCrossEntropy, FocalLossMultiClass
+import matplotlib as mpl
+mpl.use('Agg') # Disable interactive plotting
+from matplotlib import pyplot as plt
+plt.style.use('seaborn')
+
+from model.dataset import ECGData
+from model.resnet import ResNet
+from model.inception import InceptionTimeNet
+from util import WeightedCrossEntropy, FocalLossMultiClass, adjust_learning_rate
 from config import *
 
 
@@ -53,7 +62,7 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None, wri
 
             loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
 
-            if val_loader is not None and (i+1) % 100 == 0:
+            if val_loader is not None and (i+1) % 300 == 0:
                 with torch.no_grad():
                     for x, y in val_loader:
                         x, y = x.cuda(), y.cuda()
@@ -61,7 +70,7 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None, wri
                         loss = criterion(out, y)
                         total_val_loss.append(loss.item())
                         loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
-    
+
     if writer is not None:
         writer.add_scalar('Loss/train', np.mean(total_train_loss), epoch)
         writer.add_scalar('Loss/val', np.mean(total_val_loss), epoch)
@@ -97,13 +106,63 @@ def evaluate(model, data_loader):
     f1_micro = f1_score(result, target, average='micro')
     f1_macro = f1_score(result, target, average='macro')
 
-    with open('output/result-%s.txt'%(str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+    with open('data/train/hf_round1_arrythmia.txt', 'r', encoding='utf8') as f:
+        categories = f.read().strip().split('\n')
+
+    with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
+        test_contents = f.readlines()
+
+    with open('output/result-%s-%s-%s.txt'%(MODEL, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+        f.write('========================================\n')
+        f.write('| Performance Score\n')
+        f.write('========================================\n')
+        f.write('\n')
         f.write('Presion Micro: %f\n'%precision_micro)
         f.write('Presion Macro: %f\n'%precision_macro)
         f.write('Recall Micro: %f\n'%recall_micro)
         f.write('Recall Macro: %f\n'%recall_macro)
         f.write('F1 Micro: %f\n'%f1_micro)
         f.write('F1 Macro: %f\n'%f1_macro)
+        f.write('\n\n')
+
+        f.write('========================================\n')
+        f.write('| Results [Ground Truth | Prediction]\n')
+        f.write('========================================\n')
+        f.write('\n')
+
+        stats = {}
+        for c in categories:
+            stats[c] = [0, 0, 0] # correct, missing, redundant
+
+        for i in range(target.shape[0]):
+            line = ''
+            correct = (target[i]&result[i]).reshape(-1).astype(bool)
+            missing = (((target[i]-result[i]).reshape(-1))>0)
+            redundant = (((target[i]-result[i]).reshape(-1))<0)
+            for c in np.array(categories)[correct]:
+                stats[c][0]+=1
+            for c in np.array(categories)[missing]:
+                stats[c][1]+=1
+            for c in np.array(categories)[redundant]:
+                stats[c][2]+=1
+
+            for j in range(target.shape[1]):
+                if target[i,j] == 1:
+                    line+='%s\t'%(categories[j])
+            line+='|\t'
+            for j in range(result.shape[1]):
+                if result[i,j] == 1:
+                    line+='%s\t'%(categories[j])
+            line = line[:-1]+'\n'
+            f.write(line)
+
+        f.write('========================================\n')
+        f.write('| Result Stats\n')
+        f.write('========================================\n')
+        f.write('\n')
+        f.write('Name | Correct | Missing | Redundant\n')
+        for key in stats:
+            f.write('%-15s | %-3d | %-3d | %-3d \n'%(key, stats[key][0], stats[key][1], stats[key][2]))
 
 
 def test(model, test_loader):
@@ -124,9 +183,9 @@ def test(model, test_loader):
     with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
         test_contents = f.readlines()
 
-    with open('output/testA-%s.txt'%(str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+    with open('output/testA-%s-%s-%s.txt'%(MODEL, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
         for i, line in tqdm(enumerate(test_contents)):
-            line = line[:-1]
+            line = line[:-1] + '\t'
             for j in range(result.shape[1]):
                 if result[i,j] == 1:
                     line+='%s\t'%(categories[j])
@@ -175,15 +234,30 @@ if __name__ == '__main__':
     gpu_tracker = MemTracker(frame, path='log/') # define a GPU tracker
     gpu_tracker.track() # run function between the code line where uses GPU
 
-    if MULTI_GPU:
-        # Initialize the model and the optimizer        
-        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
-        model = nn.DataParallel(model).cuda()
-        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    if MODE == 'restore':
+        model = load_model(RESTORE_PATH)
     else:
-        # Initialize the model and the optimizer
-        model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED).cuda()
-        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+        if MULTI_GPU:
+            # Initialize the model and the optimizer
+            if MODEL == 'resnet':     
+                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+            elif MODEL == 'inception':
+                model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
+            else:
+                raise NotImplementedError('Invalid model name!')
+            model = nn.DataParallel(model).cuda()
+            optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+        else:
+            # Initialize the model and the optimizer
+            if MODEL == 'resnet':     
+                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+            elif MODEL == 'inception':
+                model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
+            else:
+                raise NotImplementedError('Invalid model name!')
+            model = model.cuda()
+            optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+        
     summary(model, (INPUT_CHANNELS, 5000))
     gpu_tracker.track() # run function between the code line where uses GPU
 
@@ -206,17 +280,22 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
     # Training
-    print('==================================================')
-    print('| Trainging stage started.')
-    print('==================================================')
-    criterion = WeightedCrossEntropy(weights)
-    model.train()
-    for epoch in range(EPOCHS):
-        train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
-    gpu_tracker.track() # run function between the code line where uses GPU
+    if MODE != 'restore':
+        print('==================================================')
+        print('| Trainging stage started.')
+        print('==================================================')
+        criterion = WeightedCrossEntropy(weights)
+        model.train()
+        learning_rate = LEARNING_RATE
+        for epoch in range(EPOCHS):
+            train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+            if epoch in LEARNING_RATE_ADJUST:
+                learning_rate /= LEARNING_RATE_DECAY
+            adjust_learning_rate(optimizer, LEARNING_RATE)
+        gpu_tracker.track() # run function between the code line where uses GPU
 
-    if SAVE_MODEL:
-        save_model(model, path='output/%s_epoch%d_%s.pkl'%(SAVE_NAME, EPOCHS, str(datetime.now())))
+        if SAVE_MODEL:
+            save_model(model, path='output/%s_%s_epoch%d_%s.pkl'%(SAVE_NAME, MODE, EPOCHS, str(datetime.now())))
 
     # Evaluating
     print('==================================================')
@@ -234,4 +313,5 @@ if __name__ == '__main__':
     model.eval()
     result = test(model, test_loader)
 
-    writer.close()
+    if writer is not None:
+        writer.close()
