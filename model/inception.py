@@ -10,12 +10,20 @@ import torch.nn.functional as F
 
 class InceptionBlock(nn.Module):
     """
-    The inception block
-    @param input_channels: 
-    @param bottleneck_size:
-    @param hidden_channels:
-    @param max_kernel_size: 
-    @param stride: 
+    The inception block. The three convolution blocks and the max pooling layer are parallel.
+                                                                |-> Convolution 1 (hidden_channels) --|
+    Input (input_channels) --> Bottle Neck (bottleneck_size) -> |-> Convolution 2 (hidden_channels)   |----> Concat (4*hidden_size)
+                           |                                    |-> Convolution 3 (hidden_channels) --|  |
+                           |                                                                             |
+                           |-> Max Pooling --------------------------------------------------------------|
+    The input x with input_channels will be first send to the bottleneck layer and the output channels will be bottleneck_size
+    The output of bottleneck layer will be send to three convolution blocks separately, and the number of the output channels is hidden_channels
+    The input x with input_channels will be send to the max pooling layer directly
+    The four outputs will be concatenated into a single tensor, the number of channels of the tensor will be hidden_channels*4
+    @param input_channels: The number of input channels
+    @param bottleneck_size: The number of bottle neck size
+    @param hidden_channels: The number of hidden channels
+    @param stride: The stride
     """
     def __init__(self, input_channels, bottleneck_size, hidden_channels, stride):
         super(InceptionBlock, self).__init__()
@@ -77,6 +85,7 @@ class InceptionTimeNet(nn.Module):
         super(InceptionTimeNet, self).__init__()
         self.__dict__.update(locals())
 
+        # Inception layers
         self.inception1 = InceptionBlock(input_channels=input_channels, bottleneck_size=bottleneck_size, hidden_channels=hidden_channels, stride=stride)
         self.inception2 = InceptionBlock(input_channels=hidden_channels*4, bottleneck_size=bottleneck_size, hidden_channels=hidden_channels, stride=stride)
         self.inception3 = InceptionBlock(input_channels=hidden_channels*4, bottleneck_size=bottleneck_size, hidden_channels=hidden_channels, stride=stride)
