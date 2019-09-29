@@ -105,7 +105,8 @@ class InceptionTimeNet(nn.Module):
         out = self.inception2(out)
         out = self.inception3(out)
 
-        out += self.shortcut1(residual)
+        residual  = self.shortcut1(residual)
+        out = out + residual
         out = F.relu(out, inplace=True)
         residual = out
 
@@ -113,7 +114,8 @@ class InceptionTimeNet(nn.Module):
         out = self.inception5(out)
         out = self.inception6(out)
 
-        out += self.shortcut2(residual)
+        residual = self.shortcut2(residual)
+        out = out + residual
         out = F.relu(out, inplace=True)
 
         out = self.avg_pool(out)

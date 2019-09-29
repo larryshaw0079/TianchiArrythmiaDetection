@@ -23,7 +23,7 @@ SAVE_MODEL = True
 SAVE_NAME = "inception_pre"
 ENABLE_TENSORBOARD = True
 
-MODE = 'noraml'
+MODE = 'normal'
 assert MODE in ['debug', 'restore', 'normal']
 if MODE == 'debug':
     EPOCHS = 0
