@@ -9,7 +9,7 @@ LEARNING_RATE_DECAY = 10
 LEARNING_RATE_ADJUST = [32, 64, 128]
 TRAIN_SPLIT = 0.9
 BATCH_SIZE = 20
-EPOCHS = 150
+EPOCHS = 200
 NUM_WORKERS = 14
 
 # Model configuration
@@ -20,10 +20,10 @@ DILATED = True
 # Helper
 MULTI_GPU = False
 SAVE_MODEL = True
-SAVE_NAME = "resnet_dilated_decay"
+SAVE_NAME = "inception_pre"
 ENABLE_TENSORBOARD = True
 
-MODE = 'debug'
+MODE = 'noraml'
 assert MODE in ['debug', 'restore', 'normal']
 if MODE == 'debug':
     EPOCHS = 0
