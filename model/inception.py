@@ -25,7 +25,7 @@ class InceptionBlock(nn.Module):
     @param hidden_channels: The number of hidden channels
     @param stride: The stride
     """
-    def __init__(self, input_channels, bottleneck_size, hidden_channels, stride):
+    def __init__(self, input_channels, bottleneck_size, hidden_channels, stride, dropout=0.2):
         super(InceptionBlock, self).__init__()
         self.__dict__.update(locals())
 
@@ -36,17 +36,20 @@ class InceptionBlock(nn.Module):
 
         self.conv1 = nn.Sequential(
             nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=11, padding=5, stride=stride, bias=False),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
         )
 
         self.conv2 = nn.Sequential(
             nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=21, padding=10, stride=stride, bias=False),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
         )
 
         self.conv3 = nn.Sequential(
             nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=41, padding=20, stride=stride, bias=False),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
         )
 
         self.max_pooling = nn.MaxPool1d(kernel_size=3, stride=stride, padding=1)

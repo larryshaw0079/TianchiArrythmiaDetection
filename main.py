@@ -242,7 +242,7 @@ if __name__ == '__main__':
             if MODEL == 'resnet':     
                 model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
             elif MODEL == 'inception':
-                model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
+                model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=32, hidden_channels=32, stride=1, num_classes=NUM_CLASSES)
             else:
                 raise NotImplementedError('Invalid model name!')
             model = nn.DataParallel(model).cuda()
@@ -288,10 +288,15 @@ if __name__ == '__main__':
         model.train()
         learning_rate = LEARNING_RATE
         for epoch in range(EPOCHS):
-            train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+            try:
+                train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+            except Exception:
+                os.system('echo "Model %s Error occured at epoch %d." > error_%s_%d.log'%(MODEL, epoch, MODEL, epoch))
+                break
             if epoch in LEARNING_RATE_ADJUST:
                 learning_rate /= LEARNING_RATE_DECAY
             adjust_learning_rate(optimizer, LEARNING_RATE)
+            
         gpu_tracker.track() # run function between the code line where uses GPU
 
         if SAVE_MODEL:
