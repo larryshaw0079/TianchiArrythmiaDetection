@@ -19,7 +19,14 @@ class CNN_Block(nn.Module):
 class FeatureBlock(nn.Module):
     # batch_size, channels: 8(12 if extended), sequence_length: 5000
     def __init__(self, input_channels, hidden_channels, is_short):
+        """
+        feature extraction block, using cnn with different kernel size to extract both fine-grained & coerse-grained feature
+        :param input_channels: input data channels, default 8 (12 if extended)
+        :param hidden_channels:
+        :param is_short: flag to determined the kernel size for either fine-grained or coerse-grained features
+        """
         super(FeatureBlock, self).__init__()
+        # data sample rate, 500 hz, 10s ECG data
         sample_rate = 500
         if is_short:
             # batch_size, channels: 64, sequence_length: 160
@@ -62,6 +69,12 @@ class FeatureBlock(nn.Module):
 
 class BiLSTMBlock(nn.Module):
     def __init__(self, input_channels, hidden_channels, num_layers):
+        """
+        BiDirectional LSTM Block, for learning tempory dependency
+        :param input_channels:
+        :param hidden_channels:
+        :param num_layers:
+        """
         super(BiLSTMBlock, self).__init__()
         self.num_layers = num_layers
         self.hidden_channels = hidden_channels
@@ -76,6 +89,15 @@ class BiLSTMBlock(nn.Module):
 
 class DeepSleepNet(nn.Module):
     def __init__(self, input_channels, hidden_channels, num_classes, sample_rate=500):
+        """
+        DeepSleepNet, basic intuition is to use both small & large kernel cnn to extract both fine-grained feature and coersive one
+        by concatening those extracted feature as input feature to Bi-directional LSTM Module, this model could
+        extract the temporial dependency for time-sequence data like ECG
+        :param input_channels:
+        :param hidden_channels:
+        :param num_classes:
+        :param sample_rate:
+        """
         super(DeepSleepNet, self).__init__()
         self.feature_short = FeatureBlock(input_channels, hidden_channels=hidden_channels, is_short=True)
         self.feature_long = FeatureBlock(input_channels, hidden_channels=hidden_channels, is_short=False)
@@ -95,14 +117,14 @@ class DeepSleepNet(nn.Module):
 
         out = self.dropout(out)
         out = out.transpose(1, 2)
-        shortcut = self.shortcut(out)       # batch_size, channels: 256,
+        shortcut = self.shortcut(out)       # batch_size, sequence_length: 10, channels: 256
 
         out = self.bi_lstm(out)             # batch_size, sequence_length: 10, channels: 256
-        out = torch.cat((out, shortcut), -1)    # batch_size, channels: 512, sequence_length: 10
+        out = torch.cat((out, shortcut), -1)    # batch_size, sequence_length: 10, channels: 512
         out = self.dropout(out)
 
-        out = self.avg_pool(out.transpose(1, 2))
-        out = out.view(x.size(0), -1)
+        out = self.avg_pool(out.transpose(1, 2))    #batch_size, channels: 512 sequence_length: 1
+        out = out.view(x.size(0), -1)               #batch_size, channels: 512
 
-        out = self.fc(out)
+        out = self.fc(out)                          #batch_size, channel:  55
         return out
