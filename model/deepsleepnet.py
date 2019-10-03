@@ -62,16 +62,15 @@ class FeatureBlock(nn.Module):
 
 class BiLSTMBlock(nn.Module):
     def __init__(self, input_channels, hidden_channels, num_layers):
-        super(BiLSTMBlock,  self).__init__()
-        self.bi_lstm = nn.Sequential(
-            nn.LSTM(input_channels, hidden_channels, num_layers, batch_first=True, bidirectional=True),
-            nn.Dropout(p=0.5, inplace=True)
-        )
+        super(BiLSTMBlock, self).__init__()
+        self.num_layers = num_layers
+        self.hidden_channels = hidden_channels
+        self.bi_lstm = nn.LSTM(input_channels, hidden_channels, num_layers, batch_first=True, bidirectional=True, dropout=0.5)
+
 
     def forward(self, x):
-        h0 = torch.zeros(self.num_layers*2, x.size(0), self.hidden_size).cuda()
-        c0 = torch.zeros(self.num_layers*2, x.size(0), self.hidden_size).cuda()
-
+        h0 = torch.rand(self.num_layers*2, x.size(0), self.hidden_channels).cuda()
+        c0 = torch.rand(self.num_layers*2, x.size(0), self.hidden_channels).cuda()
         out, _ = self.bi_lstm(x, (h0, c0)) # batch_size, seq_length, hidden_size*2
         return out
 
@@ -83,26 +82,27 @@ class DeepSleepNet(nn.Module):
 
         self.dropout = nn.Dropout(p=0.5, inplace=True)
 
-        self.bi_lstm = nn.Sequential(
-            BiLSTMBlock(4*hidden_channels, 2*hidden_channels, 1),
-            BiLSTMBlock(4*hidden_channels, 2*hidden_channels, 1),
-        )
+        self.bi_lstm = BiLSTMBlock(4*hidden_channels, 2*hidden_channels, 2)
 
         self.shortcut = nn.Linear(4*hidden_channels, 4*hidden_channels)
-        self.fc =  nn.Linear(4*hidden_channels, num_classes)
+        self.avg_pool = nn.AdaptiveAvgPool1d(1)
+        self.fc =  nn.Linear(8*hidden_channels, num_classes)
 
     def forward(self, x):
-        sf = self.feature_short(x)      # batch_size, channels: 128, sequence_length: 10
-        lf = self.feature_long(x)       # batch_size, channels: 128, sequence_length: 10
-        out = torch.cat((sf, lf), 1)    # batch_size, channels: 256, sequence_length: 10
+        sf = self.feature_short(x)          # batch_size, channels: 128, sequence_length: 10
+        lf = self.feature_long(x)           # batch_size, channels: 128, sequence_length: 10
+        out = torch.cat((sf, lf), 1)        # batch_size, channels: 256, sequence_length: 10
 
         out = self.dropout(out)
-
-        shortcut = self.shortcut(out)
-
         out = out.transpose(1, 2)
-        out = self.bi_lstm(out)[:, -1, :]
+        shortcut = self.shortcut(out)       # batch_size, channels: 256,
 
-        out = self.dropout(out+shortcut)
+        out = self.bi_lstm(out)             # batch_size, sequence_length: 10, channels: 256
+        out = torch.cat((out, shortcut), -1)    # batch_size, channels: 512, sequence_length: 10
+        out = self.dropout(out)
+
+        out = self.avg_pool(out.transpose(1, 2))
+        out = out.view(x.size(0), -1)
+
         out = self.fc(out)
         return out
