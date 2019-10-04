@@ -20,7 +20,7 @@ DILATED = True
 # Helper
 MULTI_GPU = False
 SAVE_MODEL = True
-SAVE_NAME = "inception_new"
+SAVE_NAME = "inception_dilated"
 ENABLE_TENSORBOARD = True
 
 MODE = 'normal'

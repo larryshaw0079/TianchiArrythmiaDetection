@@ -35,7 +35,9 @@ class InceptionBlock(nn.Module):
         )
 
         self.conv1 = nn.Sequential(
-            nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=11, padding=5, stride=stride, bias=False),
+            nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=3, padding=1, stride=stride, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Conv1d(hidden_channels, hidden_channels, kernel_size=3, padding=1, stride=stride, bias=False),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout)
         )
@@ -47,7 +49,13 @@ class InceptionBlock(nn.Module):
         )
 
         self.conv3 = nn.Sequential(
-            nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=41, padding=20, stride=stride, bias=False),
+            nn.Conv1d(bottleneck_size, hidden_channels, kernel_size=3, dilation=1, padding=1, stride=stride, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Conv1d(hidden_channels, hidden_channels, kernel_size=3, dilation=2, padding=2, stride=stride, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Conv1d(hidden_channels, hidden_channels, kernel_size=3, dilation=4, padding=4, stride=stride, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Conv1d(hidden_channels, hidden_channels, kernel_size=3, dilation=8, padding=8, stride=stride, bias=False),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout)
         )

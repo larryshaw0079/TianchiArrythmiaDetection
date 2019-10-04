@@ -19,6 +19,25 @@ class WeightedCrossEntropy(nn.Module):
 
         return loss
 
+
+class F1ScoreLoss(nn.Module):
+    """
+    F1 score as loss
+    """
+    def __init__(self, num_classes):
+        super(F1ScoreLoss, self).__init__()
+
+        self.num_classes = num_classes
+
+    def forward(self, out, target):
+        loss = 0
+        for i in np.eye(self.num_classes):
+            y_true = torch.from_numpy(i.reshape(1,-1))*target
+            y_pred = torch.form_numpy(i.reshape(1,-1))*out
+            loss += 0.5 * torch.sum(y_true * y_pred) / torch.sum(y_ture + y_pred + 1e-7)
+
+        return -torch.log(loss+1e-7)
+
     
 class FocalLossMultiClass(nn.Module):
     """
