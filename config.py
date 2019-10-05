@@ -12,6 +12,8 @@ BATCH_SIZE = 20
 EPOCHS = 200
 EPOCH_TO_CHANGE = 200
 NUM_WORKERS = 14
+CRITERION = 'focal'
+assert(CRITERION in ['bce', 'focal'])
 
 # Model configuration
 MODEL = 'resnet'
@@ -24,7 +26,7 @@ FOCAL_GAMMA = 2
 # Helper
 MULTI_GPU = False
 SAVE_MODEL = True
-SAVE_NAME = "resnet_deep"
+SAVE_NAME = "resnet_focal"
 ENABLE_TENSORBOARD = True
 
 MODE = 'normal'

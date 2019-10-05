@@ -284,7 +284,14 @@ if __name__ == '__main__':
         print('==================================================')
         print('| Trainging stage started.')
         print('==================================================')
-        criterion = WeightedCrossEntropy(weights)
+
+        if CRITERION == 'bce':
+            criterion = WeightedCrossEntropy(weights)
+        elif CRITERION == 'focal':
+            criterion = FocalLossMultiClass(FOCAL_GAMMA, weights)
+        else:
+            raise NotImplementedError('Invalid loss function!')
+
         model.train()
         learning_rate = LEARNING_RATE
         for epoch in range(EPOCHS):

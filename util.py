@@ -51,9 +51,10 @@ class FocalLossMultiClass(nn.Module):
     @param gamma: 
     @param weights: 
     """
-    def __init___(self, gamma, weights):
+    def __init__(self, gamma, weights):
         super(FocalLossMultiClass, self).__init__()
-        self.__dict__.update(locals())
+        self.gamma = gamma
+        self.weights = weights
 
     def forward(self, out, target):
         y_true = target
