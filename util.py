@@ -56,7 +56,11 @@ class FocalLossMultiClass(nn.Module):
     def forward(self, out, target):
         y_true = target
         y_pred = F.sigmoid(out)
-        
+
+        loss = (y_true*((1-y_pred)**self.gamma)*torch.log(y_pred) + (1-y_true)*(y_pred**self.gamma)*torch.log(1-y_pred))
+        loss = (loss*self.weights).mean()
+
+        return loss
 
 
 def adjust_learning_rate(optimizer, lr):

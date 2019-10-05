@@ -1,5 +1,6 @@
 data/train/raw_data/
 data/test/raw_data/
+model/__pycache__/
 output/
 log/
 *.pkl
