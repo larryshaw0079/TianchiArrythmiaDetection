@@ -31,7 +31,7 @@ plt.style.use('seaborn')
 from model.dataset import ECGData
 from model.resnet import ResNet
 from model.inception import InceptionTimeNet
-from util import WeightedCrossEntropy, FocalLossMultiClass, adjust_learning_rate
+from util import WeightedCrossEntropy, FocalLossMultiClass, F1ScoreLoss, adjust_learning_rate
 from config import *
 
 
@@ -288,14 +288,21 @@ if __name__ == '__main__':
         model.train()
         learning_rate = LEARNING_RATE
         for epoch in range(EPOCHS):
+            if epoch == EPOCH_TO_CHANGE:
+                criterion = F1ScoreLoss(NUM_CLASSES)
+
             try:
                 train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
             except Exception:
                 os.system('echo "Model %s Error occured at epoch %d." > error_%s_%d.log'%(MODEL, epoch, MODEL, epoch))
                 break
+
             if epoch in LEARNING_RATE_ADJUST:
                 learning_rate /= LEARNING_RATE_DECAY
             adjust_learning_rate(optimizer, LEARNING_RATE)
+
+            if (epoch+1) % 10 == 0:
+                torch.save(model.state_dict(), 'output/parameters/param_%s_epoch%d.pkl'%(SAVE_NAME, epoch+1))
             
         gpu_tracker.track() # run function between the code line where uses GPU
 

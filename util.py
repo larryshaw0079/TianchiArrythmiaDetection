@@ -2,6 +2,7 @@ import numpy as np
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class WeightedCrossEntropy(nn.Module):
@@ -30,26 +31,32 @@ class F1ScoreLoss(nn.Module):
         self.num_classes = num_classes
 
     def forward(self, out, target):
-        loss = 0
-        for i in np.eye(self.num_classes):
-            y_true = torch.from_numpy(i.reshape(1,-1))*target
-            y_pred = torch.form_numpy(i.reshape(1,-1))*out
-            loss += 0.5 * torch.sum(y_true * y_pred) / torch.sum(y_ture + y_pred + 1e-7)
+        y_true = target
+        y_pred = F.sigmoid(out)
+        tp = torch.sum(y_true*y_pred)
+        tn = torch.sum((1-y_true)*(1-y_pred))
+        fp = torch.sum((1-y_true)*y_pred)
+        fn = torch.sum(y_true*(1-y_pred))
+        p = tp/(tp+fp+1e-7)
+        r = tp/(tp+fn+1e-7)
+        f1 = 2*p*r/(p+r+1e-7)
+        f1 = torch.where(torch.isnan(f1), torch.zeros_like(f1), f1)
 
-        return -torch.log(loss+1e-7)
+        return 1-torch.mean(f1)
 
     
 class FocalLossMultiClass(nn.Module):
     """
     The focal loss for multi-class classification
     """
-    def __init___(self, alpha, gamma):
+    def __init___(self, gamma, weights):
         super(FocalLossMultiClass, self).__init__()
         self.__dict__.update(locals())
-        # TODO
 
     def forward(self, out, target):
-        pass # TODO
+        y_true = target
+        y_pred = F.sigmoid(out)
+        
 
 
 def adjust_learning_rate(optimizer, lr):
