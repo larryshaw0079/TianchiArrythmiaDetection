@@ -4,6 +4,7 @@ model/__pycache__/
 output/
 log/
 *.pkl
+*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
