@@ -48,6 +48,8 @@ class F1ScoreLoss(nn.Module):
 class FocalLossMultiClass(nn.Module):
     """
     The focal loss for multi-class classification
+    @param gamma: 
+    @param weights: 
     """
     def __init___(self, gamma, weights):
         super(FocalLossMultiClass, self).__init__()
