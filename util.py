@@ -33,10 +33,10 @@ class F1ScoreLoss(nn.Module):
     def forward(self, out, target):
         y_true = target
         y_pred = F.sigmoid(out)
-        tp = torch.sum(y_true*y_pred)
-        tn = torch.sum((1-y_true)*(1-y_pred))
-        fp = torch.sum((1-y_true)*y_pred)
-        fn = torch.sum(y_true*(1-y_pred))
+        tp = y_true*y_pred
+        tn = (1-y_true)*(1-y_pred)
+        fp = (1-y_true)*y_pred
+        fn = y_true*(1-y_pred)
         p = tp/(tp+fp+1e-7)
         r = tp/(tp+fn+1e-7)
         f1 = 2*p*r/(p+r+1e-7)
@@ -60,7 +60,7 @@ class FocalLossMultiClass(nn.Module):
         y_true = target
         y_pred = F.sigmoid(out)
 
-        loss = -((y_true*((1-y_pred)**self.gamma)*torch.log(y_pred) + (1-y_true)*(y_pred**self.gamma)*torch.log(1-y_pred)))
+        loss = -((y_true*((1-y_pred)**self.gamma)*torch.log(y_pred+1e-7) + (1-y_true)*(y_pred**self.gamma)*torch.log(1-y_pred+1e-7)))
         loss = (loss*self.weights).mean()
 
         return loss

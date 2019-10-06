@@ -112,7 +112,7 @@ def evaluate(model, data_loader):
     with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
         test_contents = f.readlines()
 
-    with open('output/result-%s-%s-%s.txt'%(MODEL, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+    with open('output/result-%s-%s-%s.txt'%(SAVE_NAME, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
         f.write('========================================\n')
         f.write('| Performance Score\n')
         f.write('========================================\n')
@@ -183,7 +183,7 @@ def test(model, test_loader):
     with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
         test_contents = f.readlines()
 
-    with open('output/testA-%s-%s-%s.txt'%(MODEL, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+    with open('output/testA-%s-%s-%s.txt'%(SAVE_NAME, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
         for i, line in tqdm(enumerate(test_contents)):
             line = line[:-1] + '\t'
             for j in range(result.shape[1]):
