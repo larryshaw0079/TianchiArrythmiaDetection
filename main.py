@@ -29,7 +29,7 @@ from matplotlib import pyplot as plt
 plt.style.use('seaborn')
 
 from model.dataset import ECGData
-from model.resnet import ResNet
+from model.resnet import ResNet, DualResNet
 from model.inception import InceptionTimeNet
 from util import WeightedCrossEntropy, FocalLossMultiClass, F1ScoreLoss, adjust_learning_rate
 from config import *
@@ -76,6 +76,47 @@ def train(epoch, model, optimizer, criterion, train_loader, val_loader=None, wri
         writer.add_scalar('Loss/val', np.mean(total_val_loss), epoch)
 
 
+def train_spectral(epoch, model, optimizer, criterion, train_loader, val_loader=None, writer=None):
+    """
+    Train the network for an epoch. Executing model.train() before invoking this function is recommended.
+    @param epoch: The current epoch
+    @param model: The current model
+    @param optimizer: The current optimizer
+    @param criterion: The loss function
+    @param train_loader: Training dataset loader
+    @param val_loader: Validation dataset loader
+    @param writer: The tensorboard writer
+    """
+    total_train_loss = []
+    total_val_loss = []
+    with tqdm(train_loader, desc='Epoch: [%d/%d]'%(epoch+1, EPOCHS)) as loader:
+        for i, (x_t, x_s, y) in enumerate(loader):
+            x_t, x_s, y = x_t.cuda(), x_s.cuda(), y.cuda()
+            optimizer.zero_grad()
+
+            out = model(x_t, x_s)
+            loss = criterion(out, y)
+            total_train_loss.append(loss.item())
+
+            loss.backward()
+            optimizer.step()
+
+            loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
+
+            if val_loader is not None and (i+1) % 300 == 0:
+                with torch.no_grad():
+                    for x_t, x_s, y in val_loader:
+                        x_t, x_s, y = x_t.cuda(), x_s.cuda(), y.cuda()
+                        out = model(x_t, x_s)
+                        loss = criterion(out, y)
+                        total_val_loss.append(loss.item())
+                        loader.set_postfix({'train_loss': np.nan if len(total_train_loss)==0 else np.mean(total_train_loss), 'val_loss': np.nan if len(total_val_loss)==0 else np.mean(total_val_loss)})
+
+    if writer is not None:
+        writer.add_scalar('Loss/train', np.mean(total_train_loss), epoch)
+        writer.add_scalar('Loss/val', np.mean(total_val_loss), epoch)
+
+
 def evaluate(model, data_loader):
     """
     Evaluate the model performance. Executing model.eval() before invoking this function is recommended.
@@ -86,6 +127,95 @@ def evaluate(model, data_loader):
         for x, y in tqdm(data_loader):
             x = x.cuda()
             output = F.sigmoid(model(x)).detach().cpu().numpy()
+            results.append(output)
+            target.append(y.numpy())
+    result_expect_last = np.array(results[:-1]).reshape(-1, NUM_CLASSES)
+    result_last = np.array(results[-1]).reshape(-1, NUM_CLASSES)
+    results = np.concatenate((result_expect_last, result_last), axis=0)
+
+    target_expect_last = np.array(target[:-1]).reshape(-1, NUM_CLASSES)
+    target_last = np.array(target[-1]).reshape(-1, NUM_CLASSES)
+    target = np.concatenate((target_expect_last, target_last), axis=0).astype(np.int)
+
+    result = np.zeros_like(results).astype(np.int)
+    result[results>=0.5] = 1
+
+    precision_micro = precision_score(result, target, average='micro')
+    precision_macro = precision_score(result, target, average='macro')
+    recall_micro = recall_score(result, target, average='micro')
+    recall_macro = recall_score(result, target, average='macro')
+    f1_micro = f1_score(result, target, average='micro')
+    f1_macro = f1_score(result, target, average='macro')
+
+    with open('data/train/hf_round1_arrythmia.txt', 'r', encoding='utf8') as f:
+        categories = f.read().strip().split('\n')
+
+    with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
+        test_contents = f.readlines()
+
+    with open('output/result-%s-%s-%s.txt'%(SAVE_NAME, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+        f.write('========================================\n')
+        f.write('| Performance Score\n')
+        f.write('========================================\n')
+        f.write('\n')
+        f.write('Presion Micro: %f\n'%precision_micro)
+        f.write('Presion Macro: %f\n'%precision_macro)
+        f.write('Recall Micro: %f\n'%recall_micro)
+        f.write('Recall Macro: %f\n'%recall_macro)
+        f.write('F1 Micro: %f\n'%f1_micro)
+        f.write('F1 Macro: %f\n'%f1_macro)
+        f.write('\n\n')
+
+        f.write('========================================\n')
+        f.write('| Results [Ground Truth | Prediction]\n')
+        f.write('========================================\n')
+        f.write('\n')
+
+        stats = {}
+        for c in categories:
+            stats[c] = [0, 0, 0] # correct, missing, redundant
+
+        for i in range(target.shape[0]):
+            line = ''
+            correct = (target[i]&result[i]).reshape(-1).astype(bool)
+            missing = (((target[i]-result[i]).reshape(-1))>0)
+            redundant = (((target[i]-result[i]).reshape(-1))<0)
+            for c in np.array(categories)[correct]:
+                stats[c][0]+=1
+            for c in np.array(categories)[missing]:
+                stats[c][1]+=1
+            for c in np.array(categories)[redundant]:
+                stats[c][2]+=1
+
+            for j in range(target.shape[1]):
+                if target[i,j] == 1:
+                    line+='%s\t'%(categories[j])
+            line+='|\t'
+            for j in range(result.shape[1]):
+                if result[i,j] == 1:
+                    line+='%s\t'%(categories[j])
+            line = line[:-1]+'\n'
+            f.write(line)
+
+        f.write('========================================\n')
+        f.write('| Result Stats\n')
+        f.write('========================================\n')
+        f.write('\n')
+        f.write('Name | Correct | Missing | Redundant\n')
+        for key in stats:
+            f.write('%-15s | %-3d | %-3d | %-3d \n'%(key, stats[key][0], stats[key][1], stats[key][2]))
+
+
+def evaluate_spectral(model, data_loader):
+    """
+    Evaluate the model performance. Executing model.eval() before invoking this function is recommended.
+    """
+    results = []
+    target = []
+    with torch.no_grad():
+        for x_t, x_s, y in tqdm(data_loader):
+            x_t, x_s = x_t.cuda(), x_s.cuda()
+            output = F.sigmoid(model(x_t, x_s)).detach().cpu().numpy()
             results.append(output)
             target.append(y.numpy())
     result_expect_last = np.array(results[:-1]).reshape(-1, NUM_CLASSES)
@@ -195,6 +325,36 @@ def test(model, test_loader):
     return result
 
 
+def test_spectral(model, test_loader):
+    """
+    Output results. Executing model.eval() before invoking this function is recommended.
+    """
+    with torch.no_grad():
+        output = [F.sigmoid(model(x_t.cuda(), x_s.cuda())).detach().cpu().numpy() for x_t, x_s in tqdm(test_loader)]
+        output_expect_last = np.array(output[:-1]).reshape(-1, NUM_CLASSES)
+        output_last = np.array(output[-1]).reshape(-1, NUM_CLASSES)
+        output = np.concatenate((output_expect_last, output_last), axis=0)
+    result = np.zeros_like(output).astype(np.int)
+    result[output>=0.5] = 1
+
+    with open('data/train/hf_round1_arrythmia.txt', 'r', encoding='utf8') as f:
+        categories = f.read().strip().split('\n')
+
+    with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
+        test_contents = f.readlines()
+
+    with open('output/testA-%s-%s-%s.txt'%(SAVE_NAME, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+        for i, line in tqdm(enumerate(test_contents)):
+            line = line[:-1] + '\t'
+            for j in range(result.shape[1]):
+                if result[i,j] == 1:
+                    line+='%s\t'%(categories[j])
+            line = line[:-1]+'\n'
+            f.write(line)
+    
+    return result
+
+
 def save_model(model, path):
     torch.save(model, path)
 
@@ -239,8 +399,11 @@ if __name__ == '__main__':
     else:
         if MULTI_GPU:
             # Initialize the model and the optimizer
-            if MODEL == 'resnet':     
-                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+            if MODEL == 'resnet':
+                if USE_SPECTRAL:
+                    model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+                else:
+                    model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
             elif MODEL == 'inception':
                 model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=32, hidden_channels=32, stride=1, num_classes=NUM_CLASSES)
             else:
@@ -249,16 +412,20 @@ if __name__ == '__main__':
             optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
         else:
             # Initialize the model and the optimizer
-            if MODEL == 'resnet':     
-                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+            if MODEL == 'resnet':
+                if USE_SPECTRAL:
+                    model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+                else: 
+                    model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
             elif MODEL == 'inception':
                 model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
             else:
                 raise NotImplementedError('Invalid model name!')
             model = model.cuda()
             optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
-        
-    summary(model, (INPUT_CHANNELS, 5000))
+    
+    if not USE_SPECTRAL:
+        summary(model, (INPUT_CHANNELS, 5000))
     gpu_tracker.track() # run function between the code line where uses GPU
 
     writer = None
@@ -270,7 +437,7 @@ if __name__ == '__main__':
             writer.add_graph(model, (dummy_input, ))
 
     # Dataset
-    dataset = ECGData(phase='train')
+    dataset = ECGData(phase='train', spectral=USE_SPECTRAL)
     # weights = F.softmin(torch.tensor(dataset.get_class_distribution().astype(np.float32), requires_grad=False).cuda())
     weights = torch.tensor(1/np.log(dataset.get_class_distribution().astype(np.float32)), requires_grad=False).cuda()
     train_size = int(len(dataset)*TRAIN_SPLIT)
@@ -299,7 +466,10 @@ if __name__ == '__main__':
                 criterion = F1ScoreLoss(NUM_CLASSES)
 
             try:
-                train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+                if USE_SPECTRAL:
+                    train_spectral(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+                else:
+                    train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
             except Exception:
                 os.system('echo "Model %s Error occured at epoch %d." > error_%s_%d.log'%(MODEL, epoch, MODEL, epoch))
                 break
@@ -321,16 +491,22 @@ if __name__ == '__main__':
     print('| Evaluating stage started.')
     print('==================================================')
     model.eval()
-    evaluate(model, val_loader)
+    if USE_SPECTRAL:
+        evaluate_spectral(model, val_loader)
+    else:
+        evaluate(model, val_loader)
 
     # Testing
     print('==================================================')
     print('| Testing stage started.')
     print('==================================================')
-    test_dataset = ECGData(phase='test')
+    test_dataset = ECGData(phase='test', spectral=USE_SPECTRAL)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, drop_last=False)
     model.eval()
-    result = test(model, test_loader)
+    if USE_SPECTRAL:
+        result = test_spectral(model, test_loader)
+    else:
+        result = test(model, test_loader)
 
     if writer is not None:
         writer.close()

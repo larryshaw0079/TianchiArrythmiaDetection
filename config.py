@@ -1,6 +1,6 @@
 # Dataset scale
 INPUT_CHANNELS = 12
-HIDDEN_CHANNELS = 16
+HIDDEN_CHANNELS = 32
 NUM_CLASSES = 55
 
 # Model training
@@ -12,13 +12,14 @@ BATCH_SIZE = 20
 EPOCHS = 200
 EPOCH_TO_CHANGE = 200
 NUM_WORKERS = 14
-CRITERION = 'focal'
+CRITERION = 'bce'
 assert(CRITERION in ['bce', 'focal'])
 
 # Model configuration
 MODEL = 'resnet'
 assert(MODEL in ['resnet', 'inception'])
 DILATED = True
+USE_SPECTRAL = True
 
 # Focal loss setting
 FOCAL_GAMMA = 2
@@ -26,14 +27,14 @@ FOCAL_GAMMA = 2
 # Helper
 MULTI_GPU = False
 SAVE_MODEL = True
-SAVE_NAME = "resnet_focal"
-ENABLE_TENSORBOARD = True
+SAVE_NAME = "resnet_multipath_spectral"
+ENABLE_TENSORBOARD = False
 
 MODE = 'normal'
 assert MODE in ['debug', 'restore', 'normal']
 if MODE == 'debug':
     EPOCHS = 1
-    EPOCH_TO_CHANGE = 0
+    EPOCH_TO_CHANGE = 1
     SAVE_MODEL = False
     ENABLE_TENSORBOARD = False
 elif MODE == 'restore':
