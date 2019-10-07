@@ -376,6 +376,10 @@ def load_parameters(model, path):
 
 
 if __name__ == '__main__':
+    np.random.seed(SEED)
+    torch.manual_seed(SEED)
+    torch.cuda.manual_seed(SEED)
+
     if MULTI_GPU:
         num_gpu = 3
     else:
@@ -394,35 +398,35 @@ if __name__ == '__main__':
     gpu_tracker = MemTracker(frame, path='log/') # define a GPU tracker
     gpu_tracker.track() # run function between the code line where uses GPU
 
-    if MODE == 'restore':
-        model = load_model(RESTORE_PATH)
-    else:
-        if MULTI_GPU:
-            # Initialize the model and the optimizer
-            if MODEL == 'resnet':
-                if USE_SPECTRAL:
-                    model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
-                else:
-                    model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
-            elif MODEL == 'inception':
-                model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=32, hidden_channels=32, stride=1, num_classes=NUM_CLASSES)
+    model = None
+    if MULTI_GPU:
+        # Initialize the model and the optimizer
+        if MODEL == 'resnet':
+            if USE_SPECTRAL:
+                model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
             else:
-                raise NotImplementedError('Invalid model name!')
-            model = nn.DataParallel(model).cuda()
-            optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+        elif MODEL == 'inception':
+            model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=32, hidden_channels=32, stride=1, num_classes=NUM_CLASSES)
         else:
-            # Initialize the model and the optimizer
-            if MODEL == 'resnet':
-                if USE_SPECTRAL:
-                    model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
-                else: 
-                    model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
-            elif MODEL == 'inception':
-                model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
-            else:
-                raise NotImplementedError('Invalid model name!')
-            model = model.cuda()
-            optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+            raise NotImplementedError('Invalid model name!')
+        model = nn.DataParallel(model)
+    else:
+        # Initialize the model and the optimizer
+        if MODEL == 'resnet':
+            if USE_SPECTRAL:
+                model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+            else: 
+                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+        elif MODEL == 'inception':
+            model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
+        else:
+            raise NotImplementedError('Invalid model name!')
+    
+    if MODE == 'restore':
+        model.load_state_dict(torch.load(RESTORE_PATH))
+    model = model.cuda()
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
     if not USE_SPECTRAL:
         summary(model, (INPUT_CHANNELS, 5000))
@@ -447,44 +451,46 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
     # Training
-    if MODE != 'restore':
-        print('==================================================')
-        print('| Trainging stage started.')
-        print('==================================================')
+    print('==================================================')
+    print('| Trainging stage started.')
+    print('==================================================')
 
-        if CRITERION == 'bce':
-            criterion = WeightedCrossEntropy(weights)
-        elif CRITERION == 'focal':
-            criterion = FocalLossMultiClass(FOCAL_GAMMA, weights)
-        else:
-            raise NotImplementedError('Invalid loss function!')
+    if CRITERION == 'bce':
+        criterion = WeightedCrossEntropy(weights)
+    elif CRITERION == 'focal':
+        criterion = FocalLossMultiClass(FOCAL_GAMMA, weights)
+    else:
+        raise NotImplementedError('Invalid loss function!')
 
-        model.train()
-        learning_rate = LEARNING_RATE
-        for epoch in range(EPOCHS):
-            if epoch == EPOCH_TO_CHANGE:
-                criterion = F1ScoreLoss(NUM_CLASSES)
+    model.train()
+    learning_rate = LEARNING_RATE
+    start_epoch = 0
+    if MODE == 'restore':
+        start_epoch = RESUME_EPOCH
+    for epoch in range(start_epoch, EPOCHS):
+        if epoch == EPOCH_TO_CHANGE:
+            criterion = F1ScoreLoss(NUM_CLASSES)
 
-            try:
-                if USE_SPECTRAL:
-                    train_spectral(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
-                else:
-                    train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
-            except Exception:
-                os.system('echo "Model %s Error occured at epoch %d." > error_%s_%d.log'%(MODEL, epoch, MODEL, epoch))
-                break
+        try:
+            if USE_SPECTRAL:
+                train_spectral(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+            else:
+                train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+        except Exception:
+            os.system('echo "Model %s Error occured at epoch %d." > error_%s_%d.log'%(MODEL, epoch, MODEL, epoch))
+            break
 
-            if epoch in LEARNING_RATE_ADJUST:
-                learning_rate /= LEARNING_RATE_DECAY
-            adjust_learning_rate(optimizer, LEARNING_RATE)
+        if epoch in LEARNING_RATE_ADJUST:
+            learning_rate /= LEARNING_RATE_DECAY
+        adjust_learning_rate(optimizer, LEARNING_RATE)
 
-            if (epoch+1) % 10 == 0:
-                torch.save(model.state_dict(), 'output/parameters/param_%s_epoch%d.pkl'%(SAVE_NAME, epoch+1))
-            
-        gpu_tracker.track() # run function between the code line where uses GPU
+        if (epoch+1) % 10 == 0:
+            torch.save(model.state_dict(), 'output/parameters/param_%s_epoch%d.pkl'%(SAVE_NAME, epoch+1))
+        
+    gpu_tracker.track() # run function between the code line where uses GPU
 
-        if SAVE_MODEL:
-            save_model(model, path='output/%s_%s_epoch%d_%s.pkl'%(SAVE_NAME, MODE, EPOCHS, str(datetime.now())))
+    if SAVE_MODEL:
+        save_model(model, path='output/%s_%s_epoch%d_%s.pkl'%(SAVE_NAME, MODE, EPOCHS, str(datetime.now())))
 
     # Evaluating
     print('==================================================')

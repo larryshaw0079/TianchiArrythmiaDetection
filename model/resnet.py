@@ -145,6 +145,102 @@ class ResidualBlockDilated(nn.Module):
         return out
 
 
+class SELayer(nn.Module):
+    def __init__(self, channel, reduction=16):
+        super(SELayer, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool1d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(channel, channel // reduction, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(channel // reduction, channel, bias=False),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        b, c, _ = x.size()
+        y = self.avg_pool(x).view(b, c)
+        y = self.fc(y).view(b, c, 1)
+        return x * y.expand_as(x)
+
+
+class SEResidualBlockDilated(nn.Module):
+    """
+    The residual block
+    @param input_channels: The number of channels of the input data
+    @param output_channels: The number of channels of the output
+    @param stride: The stride
+    """
+    def __init__(self, input_channels, output_channels, stride=1, dropout=0.2, reduction_channels=16):
+        super(SEResidualBlockDilated, self).__init__()
+        self.input_channels = input_channels
+        self.output_channels = output_channels
+        self.reduction_channels = reduction_channels
+        self.stride = stride
+
+        self.conv11 = nn.Sequential(
+            nn.Conv1d(input_channels, output_channels, kernel_size=3, dilation=1, stride=1, padding=1, bias=False),
+            nn.BatchNorm1d(output_channels),
+            nn.ReLU(inplace=True)
+        )
+        self.conv12 = nn.Sequential(
+            nn.Conv1d(input_channels, output_channels, kernel_size=3, dilation=1, stride=1, padding=1, bias=False),
+            nn.BatchNorm1d(output_channels),
+            nn.ReLU(inplace=True)
+        )
+
+        # Only conv2 degrades the scale
+        self.conv21 = nn.Sequential(
+            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=2, stride=stride, padding=2, bias=False),
+            nn.BatchNorm1d(output_channels),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
+        )
+        self.conv22 = nn.Sequential(
+            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=2, stride=stride, padding=2, bias=False),
+            nn.BatchNorm1d(output_channels),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
+        )
+
+        self.conv31 = nn.Sequential(
+            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=4, stride=1, padding=4, bias=False),
+            nn.BatchNorm1d(output_channels),
+        )
+        self.conv32 = nn.Sequential(
+            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=4, stride=1, padding=4, bias=False),
+            nn.BatchNorm1d(output_channels),
+        )
+
+        self.se = SELayer(output_channels, reduction_channels)
+        self.relu = nn.ReLU(inplace=True)
+
+
+        # If stride == 1, the length of the time dimension will not be changed
+        # If input_channels == output_channels, the number of channels will not be changed
+        # If the channels are mismatch, the conv1d is used to upgrade the channel
+        # If the time dimensions are mismatch, the conv1d is used to downsample the scale
+        self.downsample = nn.Sequential()
+        if stride != 1 or input_channels != output_channels:
+            self.downsample = nn.Sequential(
+                nn.Conv1d(input_channels, output_channels, kernel_size=1, stride=stride, padding=0, bias=False),
+                nn.BatchNorm1d(output_channels)
+            )
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv11(x) + self.conv12(x)
+        out = self.conv21(out) + self.conv22(out)
+        out = self.conv31(out) + self.conv32(out)
+        out = self.se(out)
+
+        residual = self.downsample(x) # Downsampe is an empty list if the size of inputs and outputs are same
+        out += residual
+        out = self.relu(out)
+        
+        return out
+
+
 class ResNet(nn.Module):
     """
     The ResNet model
@@ -164,10 +260,10 @@ class ResNet(nn.Module):
         )
 
         # Residual layers
-        self.layer1 = self.__make_layer(ResidualBlockDilated, hidden_channels, hidden_channels, 2, stride=1)
-        self.layer2 = self.__make_layer(ResidualBlockDilated, hidden_channels, hidden_channels*2, 2, stride=2)
-        self.layer3 = self.__make_layer(ResidualBlockDilated, hidden_channels*2, hidden_channels*4, 2, stride=2)
-        self.layer4 = self.__make_layer(ResidualBlockDilated, hidden_channels*4, hidden_channels*8, 2, stride=2)
+        self.layer1 = self.__make_layer(SEResidualBlockDilated, hidden_channels, hidden_channels, 2, stride=1)
+        self.layer2 = self.__make_layer(SEResidualBlockDilated, hidden_channels, hidden_channels*2, 2, stride=2)
+        self.layer3 = self.__make_layer(SEResidualBlockDilated, hidden_channels*2, hidden_channels*4, 2, stride=2)
+        self.layer4 = self.__make_layer(SEResidualBlockDilated, hidden_channels*4, hidden_channels*8, 2, stride=2)
 
         self.avg_pool = nn.AdaptiveAvgPool1d(1) # Pooling operation computes the average of the last dimension (time dimension)
 
@@ -259,7 +355,8 @@ class DualResNet(nn.Module):
         self.avg_pool_s = nn.AdaptiveAvgPool1d(1)
 
         # A dense layer for output
-        self.fc = nn.Linear(hidden_channels*8, num_classes)
+        self.fc1 = nn.Linear(hidden_channels*8*2, hidden_channels*4)
+        self.fc2 = nn.Linear(hidden_channels*4, num_classes)
 
         # Initialize weights
         for m in self.modules():
@@ -307,10 +404,10 @@ class DualResNet(nn.Module):
         out_s = self.layer4_s(out_s)        
 
         out_s = self.avg_pool_s(out_s) 
-        out_s = out_s.view(x_s.size(0), -1) 
+        out_s = out_s.view(x_s.size(0), -1)
         
-        out = self.fc(out_t + out_s)
-        if True in torch.isnan(out):
-            pdb.set_trace()
+        out = torch.cat((out_t, out_s), dim=1)
+        out = self.fc1(out)
+        out = self.fc2(out)
 
         return out
