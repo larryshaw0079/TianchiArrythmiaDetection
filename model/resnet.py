@@ -248,7 +248,7 @@ class ResNet(nn.Module):
     @param hidden_channels: The channels of the output of the first conv1d layer
     @param num_classes: The number of classes of the target
     """
-    def __init__(self, input_channels, hidden_channels, num_classes, dilated=False):
+    def __init__(self, input_channels, hidden_channels, num_classes, use_se=False):
         super(ResNet, self).__init__()
 
         # The first convolution layer
@@ -260,10 +260,16 @@ class ResNet(nn.Module):
         )
 
         # Residual layers
-        self.layer1 = self.__make_layer(SEResidualBlockDilated, hidden_channels, hidden_channels, 2, stride=1)
-        self.layer2 = self.__make_layer(SEResidualBlockDilated, hidden_channels, hidden_channels*2, 2, stride=2)
-        self.layer3 = self.__make_layer(SEResidualBlockDilated, hidden_channels*2, hidden_channels*4, 2, stride=2)
-        self.layer4 = self.__make_layer(SEResidualBlockDilated, hidden_channels*4, hidden_channels*8, 2, stride=2)
+        if use_se:
+            self.layer1 = self.__make_layer(SEResidualBlockDilated, hidden_channels, hidden_channels, 2, stride=1)
+            self.layer2 = self.__make_layer(SEResidualBlockDilated, hidden_channels, hidden_channels*2, 2, stride=2)
+            self.layer3 = self.__make_layer(SEResidualBlockDilated, hidden_channels*2, hidden_channels*4, 2, stride=2)
+            self.layer4 = self.__make_layer(SEResidualBlockDilated, hidden_channels*4, hidden_channels*8, 2, stride=2)
+        else:
+            self.layer1 = self.__make_layer(ResidualBlockDilated, hidden_channels, hidden_channels, 2, stride=1)
+            self.layer2 = self.__make_layer(ResidualBlockDilated, hidden_channels, hidden_channels*2, 2, stride=2)
+            self.layer3 = self.__make_layer(ResidualBlockDilated, hidden_channels*2, hidden_channels*4, 2, stride=2)
+            self.layer4 = self.__make_layer(ResidualBlockDilated, hidden_channels*4, hidden_channels*8, 2, stride=2)
 
         self.avg_pool = nn.AdaptiveAvgPool1d(1) # Pooling operation computes the average of the last dimension (time dimension)
 

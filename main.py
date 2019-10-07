@@ -31,6 +31,7 @@ plt.style.use('seaborn')
 from model.dataset import ECGData
 from model.resnet import ResNet, DualResNet
 from model.inception import InceptionTimeNet
+from model.densenet import DenseNet
 from util import WeightedCrossEntropy, FocalLossMultiClass, F1ScoreLoss, adjust_learning_rate
 from config import *
 
@@ -405,9 +406,11 @@ if __name__ == '__main__':
             if USE_SPECTRAL:
                 model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
             else:
-                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, use_se=USE_SE)
         elif MODEL == 'inception':
             model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=32, hidden_channels=32, stride=1, num_classes=NUM_CLASSES)
+        elif MODEL == 'densenet':
+            model = DenseNet(nClasses=NUM_CLASSES, nInputChannels=INPUT_CHANNELS)
         else:
             raise NotImplementedError('Invalid model name!')
         model = nn.DataParallel(model)
@@ -417,9 +420,11 @@ if __name__ == '__main__':
             if USE_SPECTRAL:
                 model = DualResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
             else: 
-                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, dilated=DILATED)
+                model = ResNet(input_channels=INPUT_CHANNELS, hidden_channels=HIDDEN_CHANNELS, num_classes=NUM_CLASSES, use_se=USE_SE)
         elif MODEL == 'inception':
             model = InceptionTimeNet(input_channels=INPUT_CHANNELS, bottleneck_size=8, hidden_channels=16, stride=1, num_classes=NUM_CLASSES)
+        elif MODEL == 'densenet':
+            model = DenseNet(nClasses=NUM_CLASSES, nInputChannels=INPUT_CHANNELS)
         else:
             raise NotImplementedError('Invalid model name!')
     
@@ -447,8 +452,8 @@ if __name__ == '__main__':
     train_size = int(len(dataset)*TRAIN_SPLIT)
     val_size = len(dataset) - train_size
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
 
     # Training
     print('==================================================')

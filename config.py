@@ -13,13 +13,13 @@ EPOCHS = 200
 EPOCH_TO_CHANGE = 200
 NUM_WORKERS = 14
 SEED = 2019
-CRITERION = 'bce'
+CRITERION = 'focal'
 assert(CRITERION in ['bce', 'focal'])
 
 # Model configuration
 MODEL = 'resnet'
-assert(MODEL in ['resnet', 'inception'])
-DILATED = True
+assert(MODEL in ['resnet', 'inception', 'densenet'])
+USE_SE = False
 USE_SPECTRAL = False
 
 # Focal loss setting
@@ -28,10 +28,10 @@ FOCAL_GAMMA = 2
 # Helper
 MULTI_GPU = False
 SAVE_MODEL = True
-SAVE_NAME = "seresnet_multipath"
+SAVE_NAME = "resnet_multipath_focal"
 ENABLE_TENSORBOARD = False
 
-MODE = 'normal'
+MODE = 'restore'
 assert MODE in ['debug', 'restore', 'normal']
 if MODE == 'debug':
     EPOCHS = 1
@@ -39,9 +39,9 @@ if MODE == 'debug':
     SAVE_MODEL = False
     ENABLE_TENSORBOARD = False
 elif MODE == 'restore':
-    RESUME_EPOCH = 120
+    RESUME_EPOCH = 170
     SAVE_MODEL = False
     ENABLE_TENSORBOARD = False
-    RESTORE_PATH = 'output/parameters/param_resnet_multipath_focal_epoch120.pkl'
+    RESTORE_PATH = 'output/parameters/param_resnet_multipath_focal_epoch170.pkl'
 else:
     pass
