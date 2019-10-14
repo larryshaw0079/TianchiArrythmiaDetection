@@ -1,5 +1,4 @@
-data/train/raw_data/
-data/test/raw_data/
+data/
 model/__pycache__/
 output/
 log/
