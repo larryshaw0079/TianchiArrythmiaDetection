@@ -83,39 +83,39 @@ class ResidualBlockDilated(nn.Module):
         self.output_channels = output_channels
         self.stride = stride
 
-        self.conv11 = nn.Sequential(
+        self.conv1 = nn.Sequential(
             nn.Conv1d(input_channels, output_channels, kernel_size=3, dilation=1, stride=1, padding=1, bias=False),
             nn.BatchNorm1d(output_channels),
             nn.ReLU(inplace=True)
         )
-        self.conv12 = nn.Sequential(
-            nn.Conv1d(input_channels, output_channels, kernel_size=3, dilation=1, stride=1, padding=1, bias=False),
-            nn.BatchNorm1d(output_channels),
-            nn.ReLU(inplace=True)
-        )
+        # self.conv12 = nn.Sequential(
+        #     nn.Conv1d(input_channels, output_channels, kernel_size=3, dilation=1, stride=1, padding=1, bias=False),
+        #     nn.BatchNorm1d(output_channels),
+        #     nn.ReLU(inplace=True)
+        # )
 
         # Only conv2 degrades the scale
-        self.conv21 = nn.Sequential(
+        self.conv2 = nn.Sequential(
             nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=2, stride=stride, padding=2, bias=False),
             nn.BatchNorm1d(output_channels),
             nn.ReLU(inplace=True),
             nn.Dropout(dropout)
         )
-        self.conv22 = nn.Sequential(
-            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=2, stride=stride, padding=2, bias=False),
-            nn.BatchNorm1d(output_channels),
-            nn.ReLU(inplace=True),
-            nn.Dropout(dropout)
-        )
+        # self.conv22 = nn.Sequential(
+        #     nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=2, stride=stride, padding=2, bias=False),
+        #     nn.BatchNorm1d(output_channels),
+        #     nn.ReLU(inplace=True),
+        #     nn.Dropout(dropout)
+        # )
 
-        self.conv31 = nn.Sequential(
+        self.conv3 = nn.Sequential(
             nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=4, stride=1, padding=4, bias=False),
             nn.BatchNorm1d(output_channels),
         )
-        self.conv32 = nn.Sequential(
-            nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=4, stride=1, padding=4, bias=False),
-            nn.BatchNorm1d(output_channels),
-        )
+        # self.conv32 = nn.Sequential(
+        #     nn.Conv1d(output_channels, output_channels, kernel_size=3, dilation=4, stride=1, padding=4, bias=False),
+        #     nn.BatchNorm1d(output_channels),
+        # )
 
         self.relu = nn.ReLU(inplace=True)
 
@@ -134,9 +134,9 @@ class ResidualBlockDilated(nn.Module):
     def forward(self, x):
         residual = x
 
-        out = self.conv11(x) + self.conv12(x)
-        out = self.conv21(out) + self.conv22(out)
-        out = self.conv31(out) + self.conv32(out)
+        out = self.conv1(x)# + self.conv12(x)
+        out = self.conv2(out)# + self.conv22(out)
+        out = self.conv3(out)# + self.conv32(out)
 
         residual = self.downsample(x) # Downsampe is an empty list if the size of inputs and outputs are same
         out += residual

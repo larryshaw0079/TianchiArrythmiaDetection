@@ -311,10 +311,11 @@ def test(model, test_loader):
     with open('data/train/hf_round1_arrythmia.txt', 'r', encoding='utf8') as f:
         categories = f.read().strip().split('\n')
 
-    with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
+    # with open('data/test/hf_round1_subA.txt', 'r', encoding='utf8') as f:
+    with open('data/testB/hf_round1_subB.txt', 'r', encoding='utf8') as f:
         test_contents = f.readlines()
 
-    with open('output/testA-%s-%s-%s.txt'%(SAVE_NAME, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
+    with open('output/testB-%s-%s-%s.txt'%(SAVE_NAME, MODE, str(datetime.now()).strip().replace(':','-')), 'w', encoding='utf8') as f:
         for i, line in tqdm(enumerate(test_contents)):
             line = line[:-1] + '\t'
             for j in range(result.shape[1]):
@@ -476,14 +477,10 @@ if __name__ == '__main__':
         if epoch == EPOCH_TO_CHANGE:
             criterion = F1ScoreLoss(NUM_CLASSES)
 
-        try:
-            if USE_SPECTRAL:
-                train_spectral(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
-            else:
-                train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
-        except Exception:
-            os.system('echo "Model %s Error occured at epoch %d." > error_%s_%d.log'%(MODEL, epoch, MODEL, epoch))
-            break
+        if USE_SPECTRAL:
+            train_spectral(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
+        else:
+            train(epoch, model, optimizer, criterion, train_loader, val_loader, writer)
 
         if epoch in LEARNING_RATE_ADJUST:
             learning_rate /= LEARNING_RATE_DECAY

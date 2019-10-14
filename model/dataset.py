@@ -24,7 +24,8 @@ class ECGData(Dataset):
         self.spectral = spectral
         self.category_path = 'data/train/hf_round1_arrythmia.txt'
         self.train_label_path = 'data/train/hf_round1_label.txt'
-        self.test_label_path = 'data/test/hf_round1_subA.txt'
+        # self.test_label_path = 'data/test/hf_round1_subA.txt'
+        self.test_label_path = 'data/testB/hf_round1_subB.txt'
 
         with open(self.category_path, 'r', encoding='utf8') as f:
             self.category = f.read().split('\n')[:-1]
@@ -99,7 +100,8 @@ class ECGData(Dataset):
                 return x_t, x_s
             else:
                 # In the test phase, return the features (1, num_channels, time_length) only
-                x = np.loadtxt('data/test/raw_data/%s'%(self.test_candidates[idx]), delimiter=' ', skiprows=1)
+                # x = np.loadtxt('data/test/raw_data/%s'%(self.test_candidates[idx]), delimiter=' ', skiprows=1)
+                x = np.loadtxt('data/testB/raw_data/%s'%(self.test_candidates[idx]), delimiter=' ', skiprows=1)
                 if self.extend:
                     extended_channels = np.zeros((x.shape[0], 4))
                     extended_channels[:, 0] = x[:, 1] - x[:, 0]
