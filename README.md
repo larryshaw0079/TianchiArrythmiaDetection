@@ -12,3 +12,4 @@ python main.py
 ```
 
 Make sure you have installed Pytorch and other scientific packages such as Numpy, Pandas, etc.
+
